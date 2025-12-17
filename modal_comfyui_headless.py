@@ -50,6 +50,8 @@ image = (
         "libgl1",
         "libglib2.0-0",
     )
+    # Required for @modal.fastapi_endpoint
+    .pip_install("fastapi[standard]==0.115.4", "httpx==0.28.1")
     .run_commands(
         # ComfyUI
         f"git clone --depth 1 https://github.com/comfyanonymous/ComfyUI.git {COMFY_DIR}",
@@ -266,4 +268,3 @@ class ComfyHeadless:
             "result_path": primary,
             "stored_paths": stored_paths,
         }
-
