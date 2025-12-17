@@ -67,4 +67,5 @@ EXPOSE 8188
 # ComfyUI runs on port 8188 - healthcheck handled by application
 
 ENTRYPOINT ["/usr/bin/tini","--"]
-CMD ["python3.11", "/root/ComfyUI/main.py", "--cpu", "--listen", "0.0.0.0"]
+# Railway often injects $PORT; ComfyUI must listen on it for routing/healthchecks to pass.
+CMD ["bash","-lc","exec python3.11 -u /root/ComfyUI/main.py --cpu --listen 0.0.0.0 --port ${PORT:-8188} ${CLI_ARGS:-${COMFYUI_ARGS:-}}"]
