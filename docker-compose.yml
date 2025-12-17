@@ -1,0 +1,20 @@
+services:
+  comfyui:
+    build:
+      context: .
+    ports:
+      - '8188:8188'
+    environment:
+      # For Ollama-related custom nodes. On Mac/Windows, host.docker.internal works.
+      # On Linux, extra_hosts below enables it.
+      - OLLAMA_API_URL=http://host.docker.internal:11434
+      # Optional: pass extra ComfyUI CLI args, e.g. "--enable-cors-header"
+      - CLI_ARGS=
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - ./data/models:/root/ComfyUI/models
+      - ./data/input:/root/ComfyUI/input
+      - ./data/output:/root/ComfyUI/output
+      - ./data/user:/root/ComfyUI/user
+    restart: unless-stopped

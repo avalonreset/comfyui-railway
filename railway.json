@@ -1,0 +1,35 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "name": "comfyui",
+  "build": {
+    "builder": "DOCKERFILE"
+  },
+  "deploy": {
+    "port": 8188,
+    "healthcheckPath": "/",
+    "healthcheckTimeout": 60,
+    "restartPolicyType": "ON_FAILURE",
+    "resources": {
+      "cpu": 1,
+      "memory": 2048
+    }
+  },
+  "variables": {
+    "PORT": {
+      "description": "HTTP port (Railway sets this automatically; leave unset unless you know you need to override).",
+      "default": ""
+    },
+    "OLLAMA_API_URL": {
+      "description": "Base URL for an Ollama instance (used by Ollama custom nodes). Examples: http://192.168.1.50:11434 or https://<your-tunnel-host>.",
+      "default": ""
+    },
+    "CLI_ARGS": {
+      "description": "Extra args appended to `python main.py` (example: --enable-cors-header).",
+      "default": ""
+    },
+    "COMFYUI_ARGS": {
+      "description": "(Deprecated) Use CLI_ARGS. Kept for backwards compatibility.",
+      "default": ""
+    }
+  }
+}
