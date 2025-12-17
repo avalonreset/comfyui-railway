@@ -12,13 +12,25 @@ Minimal, production-ready **CPU-only** ComfyUI image for Railway. Installs Comfy
 
 ## Auto-redeploy on Git push (reliable)
 
-If your Railway service is not automatically redeploying on GitHub pushes, use a Railway **Deploy Hook** triggered by GitHub Actions:
+If your Railway service is not automatically redeploying on GitHub pushes (common when the service shows an **Upstream Repo** + **Check for updates** button), use GitHub Actions to trigger a deploy.
+
+This repo includes `.github/workflows/railway-deploy.yml`, which supports two trigger methods:
+
+### Option A: Deploy Hook URL (simplest, if available)
 
 1. In Railway, open your service → **Deployments** (or **Settings**) → create/copy a **Deploy Hook** URL.
 2. In GitHub, add a repo secret named `RAILWAY_DEPLOY_HOOK_URL` containing that URL.
 3. Push to `main`. GitHub Actions will call the hook and Railway will build/deploy.
 
 Workflow file: `.github/workflows/railway-deploy.yml`
+
+### Option B: Railway CLI token (works even if you can’t find hooks)
+
+1. Create a Railway API token and add it as a GitHub repo secret: `RAILWAY_TOKEN`
+2. Add these GitHub repo secrets (IDs are in your Railway dashboard URL):
+   - `RAILWAY_PROJECT_ID`
+   - `RAILWAY_SERVICE_ID`
+3. Push to `main`. GitHub Actions will run `railway up` to trigger a deploy.
 
 ## Local Docker testing
 

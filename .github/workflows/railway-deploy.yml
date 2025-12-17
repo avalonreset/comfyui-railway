@@ -12,13 +12,28 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Railway deploy hook
+      - name: Trigger Railway deploy (hook or CLI)
         env:
           RAILWAY_DEPLOY_HOOK_URL: ${{ secrets.RAILWAY_DEPLOY_HOOK_URL }}
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+          RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
         run: |
-          if [ -z "$RAILWAY_DEPLOY_HOOK_URL" ]; then
-            echo "Missing secret: RAILWAY_DEPLOY_HOOK_URL"
+          set -euo pipefail
+          if [ -n "${RAILWAY_DEPLOY_HOOK_URL:-}" ]; then
+            curl -fsS -X POST "$RAILWAY_DEPLOY_HOOK_URL" > /dev/null
+            exit 0
+          fi
+
+          if [ -z "${RAILWAY_TOKEN:-}" ] || [ -z "${RAILWAY_PROJECT_ID:-}" ] || [ -z "${RAILWAY_SERVICE_ID:-}" ]; then
+            echo "Missing secrets. Provide either:"
+            echo "  - RAILWAY_DEPLOY_HOOK_URL"
+            echo "or all of:"
+            echo "  - RAILWAY_TOKEN"
+            echo "  - RAILWAY_PROJECT_ID"
+            echo "  - RAILWAY_SERVICE_ID"
             exit 1
           fi
-          curl -fsS -X POST "$RAILWAY_DEPLOY_HOOK_URL" > /dev/null
 
+          npm i -g @railway/cli@latest
+          railway up --service "$RAILWAY_SERVICE_ID" --project "$RAILWAY_PROJECT_ID"
