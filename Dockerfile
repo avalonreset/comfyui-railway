@@ -68,7 +68,7 @@ RUN mkdir -p "${COMFYUI_DIR}/custom_nodes" \
 EXPOSE 8188
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-  CMD-SHELL curl -fsS "http://127.0.0.1:${PORT:-8188}/" | grep -qi "ComfyUI" || exit 1
+  CMD curl -fsS "http://127.0.0.1:${PORT:-8188}/" | grep -qi "ComfyUI" || exit 1
 
 ENTRYPOINT ["/usr/bin/tini","--"]
 CMD ["bash","-lc","exec python3.11 -u main.py --listen 0.0.0.0 --port ${PORT:-8188} ${CLI_ARGS:-${COMFYUI_ARGS:-}}"]
