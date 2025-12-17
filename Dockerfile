@@ -63,8 +63,8 @@ RUN mkdir -p "${COMFYUI_DIR}/custom_nodes" \
 
 EXPOSE 8188
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-  CMD curl -fsS "http://127.0.0.1:${PORT:-8188}/" | grep -qi "ComfyUI" || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD python3.11 -c "import socket; s = socket.socket(); s.settimeout(5); s.connect(('127.0.0.1', 8188)); s.close()"
 
 ENTRYPOINT ["/usr/bin/tini","--"]
 CMD ["python3.11", "/root/ComfyUI/main.py", "--cpu", "--listen", "0.0.0.0"]
