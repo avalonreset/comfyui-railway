@@ -1,6 +1,5 @@
-# syntax=docker/dockerfile:1
 FROM public.ecr.aws/docker/library/ubuntu:22.04
-# Build timestamp: 2025-12-17-11-36
+# Build timestamp: 2025-12-17-11-55
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
