@@ -6,8 +6,6 @@
   },
   "deploy": {
     "port": 8188,
-    "healthcheckPath": "/api",
-    "healthcheckTimeout": 180,
     "healthchecks": {
       "enabled": false
     },
