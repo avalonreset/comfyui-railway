@@ -10,6 +10,9 @@ Minimal, production-ready **CPU-only** ComfyUI image for Railway. Installs Comfy
 4. Add persistent storage by attaching volumes (see "Storage"). Without volumes, models/workflows are lost on redeploy.
 5. Deploy and open the public URL. ComfyUI runs on port `8188` (or `PORT` if Railway overrides it).
 
+Railway deploy healthcheck:
+- Set **Healthcheck Path** to `/api` (ComfyUI does not reliably serve `/`).
+
 ## Auto-redeploy on Git push (reliable)
 
 If your Railway service is not automatically redeploying on GitHub pushes (common when the service shows an **Upstream Repo** + **Check for updates** button), use GitHub Actions to trigger a deploy.

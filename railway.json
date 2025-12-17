@@ -6,8 +6,8 @@
   },
   "deploy": {
     "port": 8188,
-    "healthcheckPath": "/",
-    "healthcheckTimeout": 60,
+    "healthcheckPath": "/api",
+    "healthcheckTimeout": 180,
     "restartPolicyType": "ON_FAILURE",
     "resources": {
       "cpu": 1,
