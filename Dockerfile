@@ -25,6 +25,7 @@ RUN apt-get update \
     ca-certificates \
     curl \
     git \
+    socat \
     tini \
     python3.11 \
     python3.11-venv \
@@ -64,6 +65,7 @@ RUN mkdir -p "${COMFYUI_DIR}/custom_nodes" \
 
 EXPOSE 8188
 
-ENTRYPOINT ["/usr/bin/tini","--"]
-# Railway often injects $PORT; ComfyUI must listen on it for routing/healthchecks to pass.
-CMD ["bash","-lc","exec python3.11 -u /root/ComfyUI/main.py --cpu --listen 0.0.0.0 --port ${PORT:-8188} ${CLI_ARGS:-${COMFYUI_ARGS:-}}"]
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/usr/bin/tini","--","/entrypoint.sh"]
