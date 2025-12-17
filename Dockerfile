@@ -46,6 +46,11 @@ WORKDIR ${COMFYUI_DIR}
 # Ensure mount points exist
 RUN mkdir -p "${COMFYUI_DIR}/models" "${COMFYUI_DIR}/input" "${COMFYUI_DIR}/output" "${COMFYUI_DIR}/user"
 
+# ComfyUI-Manager config (speeds cold-starts on platforms with strict healthchecks)
+# See: https://github.com/ltdrdata/ComfyUI-Manager#configini
+RUN mkdir -p "${COMFYUI_DIR}/user/__manager" \
+  && printf "[default]\nnetwork_mode = offline\nfile_logging = False\ndefault_cache_as_channel_url = False\n" > "${COMFYUI_DIR}/user/__manager/config.ini"
+
 # CPU-only PyTorch wheels + ComfyUI requirements (no CUDA/GPU libs)
 RUN python3.11 -m pip install --upgrade pip setuptools wheel \
   && python3.11 -m pip install --index-url https://download.pytorch.org/whl/cpu torch torchvision torchaudio \

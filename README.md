@@ -11,6 +11,7 @@ Minimal, production-ready **CPU-only** ComfyUI image for Railway. Installs Comfy
 Notes:
 - The container listens on `0.0.0.0` and honors Railway `PORT`. If Railway assigns a different `PORT` than `8188`, the container forwards it to ComfyUI internally to keep routing/healthchecks working.
 - Recommended Railway deploy healthcheck path: `/api` (ComfyUI does not reliably serve `/` early in startup).
+- ComfyUI-Manager is configured to start in `offline` mode by default (faster cold-starts). To re-enable its startup network updates, edit `/root/ComfyUI/user/__manager/config.ini` and set `network_mode = public`.
 
 ## Environment variables (Railway → Variables)
 
