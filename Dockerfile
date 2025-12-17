@@ -1,5 +1,5 @@
 FROM public.ecr.aws/docker/library/ubuntu:22.04
-# Build timestamp: 2025-12-17-11-55
+# Build timestamp: 2025-12-17-12-05
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
