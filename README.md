@@ -1,6 +1,6 @@
 # ComfyUI (CPU-only) on Railway (Docker)
 
-Minimal, production-ready **CPU-only** ComfyUI image for Railway. Installs ComfyUI from GitHub and pre-installs **ComfyUI-Manager** (based on the YanWenKun/ComfyUI-Docker `/cpu` approach).
+Minimal, production-ready **CPU-only** ComfyUI image for Railway. Installs ComfyUI from GitHub and pre-installs **ComfyUI-Manager** (based on the YanWenKun/ComfyUI-Docker `/cpu` approach). This image starts ComfyUI with `--cpu --normalizesd` to avoid any CUDA/GPU usage.
 
 ## Railway quick start
 
