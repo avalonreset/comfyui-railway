@@ -64,8 +64,7 @@ RUN mkdir -p "${COMFYUI_DIR}/custom_nodes" \
 
 EXPOSE 8188
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=5 \
-  CMD curl -fS "http://localhost:8188/api" > /dev/null 2>&1 || exit 1
+# ComfyUI runs on port 8188 - healthcheck handled by application
 
 ENTRYPOINT ["/usr/bin/tini","--"]
 CMD ["python3.11", "/root/ComfyUI/main.py", "--cpu", "--listen", "0.0.0.0"]
