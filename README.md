@@ -90,21 +90,30 @@ Security note: If you expose Ollama publicly, protect it (auth/allowlists) and a
 
 ## Storage / persistence on Railway
 
-For persistence across deploys, attach volumes to the paths you want to keep:
+Railway storage is ephemeral by default. To persist data across deploys/restarts, configure Railway Volumes:
+
+- Docs: https://docs.railway.com/reference/volumes
+
+Recommended persistent directories:
 
 - `/root/ComfyUI/models`
-- `/root/ComfyUI/input`
 - `/root/ComfyUI/output`
-- `/root/ComfyUI/user`
+- `/root/ComfyUI/user/default/workflows`
 
 What persists where:
 
 - Models (checkpoints/loras/etc): `/root/ComfyUI/models`
-- Workflows and UI state: `/root/ComfyUI/user` (includes `user/default/workflows`)
+- Workflows: `/root/ComfyUI/user/default/workflows`
 - Outputs (generated images): `/root/ComfyUI/output`
-- Inputs (images you upload): `/root/ComfyUI/input`
 
-If you can only attach one volume, prioritize `/root/ComfyUI/user` (workflows) and keep models external or re-upload as needed.
+### Railway volume setup (dashboard)
+
+1. Open your Railway service.
+2. Go to **Volumes**.
+3. Create a volume and mount it to one of the paths above (repeat for each path you want to persist).
+4. Redeploy the service.
+
+If you can only attach one volume, prioritize `/root/ComfyUI/user/default/workflows` so saved workflows survive deploys.
 
 ## Environment variables
 

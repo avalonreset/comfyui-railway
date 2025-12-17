@@ -59,7 +59,11 @@ RUN python3.11 -m pip install --upgrade pip setuptools wheel \
 RUN mkdir -p "${COMFYUI_DIR}/custom_nodes" \
   && git clone --depth 1 --branch "${COMFYUI_MANAGER_REF}" https://github.com/ltdrdata/ComfyUI-Manager.git "${COMFYUI_DIR}/custom_nodes/ComfyUI-Manager"
 
-VOLUME ["/root/ComfyUI/models","/root/ComfyUI/input","/root/ComfyUI/output","/root/ComfyUI/user"]
+# Storage paths (do NOT declare Docker VOLUME here; Railway bans VOLUME instructions):
+# - Models:    /root/ComfyUI/models
+# - Inputs:    /root/ComfyUI/input
+# - Outputs:   /root/ComfyUI/output
+# - Workflows: /root/ComfyUI/user/default/workflows
 
 EXPOSE 8188
 
