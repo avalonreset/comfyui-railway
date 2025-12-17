@@ -24,11 +24,7 @@ RUN apt-get update \
     ca-certificates \
     curl \
     git \
-    software-properties-common \
     tini \
-  && add-apt-repository ppa:deadsnakes/ppa \
-  && apt-get update \
-  && apt-get install -y --no-install-recommends \
     python3.11 \
     python3.11-venv \
     python3.11-distutils \
