@@ -64,7 +64,8 @@ RUN mkdir -p "${COMFYUI_DIR}/custom_nodes" \
 
 EXPOSE 8188
 
-# ComfyUI runs on port 8188 - healthcheck handled by application
+HEALTHCHECK --interval=30s --timeout=5s --start-period=120s --retries=10 \
+  CMD curl -f "http://localhost:${PORT:-8188}/" 2>/dev/null | grep -q "ComfyUI" || exit 1
 
 ENTRYPOINT ["/usr/bin/tini","--"]
 # Railway often injects $PORT; ComfyUI must listen on it for routing/healthchecks to pass.
