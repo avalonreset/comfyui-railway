@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM ubuntu:22.04
+FROM public.ecr.aws/docker/library/ubuntu:22.04
 # Build timestamp: 2025-12-17-11-36
 
 ENV DEBIAN_FRONTEND=noninteractive
