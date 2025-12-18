@@ -246,6 +246,7 @@ class ComfyHeadless:
         Path(COMFY_OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
 
         # Ensure ComfyUI-Manager doesn't do startup network fetches in production.
+        Path(f"{COMFY_DIR}/user/__manager").mkdir(parents=True, exist_ok=True)
         (Path(f"{COMFY_DIR}/user/__manager/config.ini")).write_text(
             "[default]\nnetwork_mode = offline\nfile_logging = False\n",
             encoding="utf-8",
