@@ -67,8 +67,6 @@ image = (
         # ComfyUI Ollama nodes (stavsap/comfyui-ollama)
         f"git clone --depth 1 https://github.com/stavsap/comfyui-ollama.git {COMFY_DIR}/custom_nodes/comfyui-ollama",
         f"python -m pip install -r {COMFY_DIR}/custom_nodes/comfyui-ollama/requirements.txt",
-        # Optional: pre-create ComfyUI-Manager config (you can change this later via the mounted /root/ComfyUI/user volume)
-        f"mkdir -p {COMFY_DIR}/user/__manager && printf '[default]\\nnetwork_mode = offline\\nfile_logging = False\\n' > {COMFY_DIR}/user/__manager/config.ini",
     )
 )
 
@@ -79,7 +77,7 @@ def _wait_for_comfy(timeout_s: int = 240) -> None:
     deadline = time.time() + timeout_s
     while time.time() < deadline:
         try:
-            r = httpx.get(f"http://127.0.0.1:{COMFY_PORT}/system_stats", timeout=2)
+            r = httpx.get(f"http://127.0.0.1:{COMFY_PORT}/api/system_stats", timeout=2)
             if r.status_code == 200:
                 return
         except Exception:
@@ -217,7 +215,16 @@ def _pick_primary_video(stored_paths: list[str]) -> str | None:
 class ComfyHeadless:
     @modal.enter()
     def enter(self) -> None:
+        Path(f"{COMFY_DIR}/models").mkdir(parents=True, exist_ok=True)
+        Path(f"{COMFY_DIR}/user/__manager").mkdir(parents=True, exist_ok=True)
         Path(COMFY_OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
+
+        # Ensure ComfyUI-Manager doesn't do startup network fetches in production.
+        (Path(f"{COMFY_DIR}/user/__manager/config.ini")).write_text(
+            "[default]\nnetwork_mode = offline\nfile_logging = False\n",
+            encoding="utf-8",
+        )
+
         subprocess.Popen(
             [
                 "python",
