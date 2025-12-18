@@ -33,6 +33,8 @@ RESULTS_MOUNT = "/results"
 app = modal.App(name=APP_NAME)
 
 results_vol = modal.Volume.from_name("comfy-results", create_if_missing=True)
+models_vol = modal.Volume.from_name("comfy-models", create_if_missing=True)
+user_vol = modal.Volume.from_name("comfy-user", create_if_missing=True)
 
 image = (
     modal.Image.debian_slim(python_version="3.11")
@@ -66,7 +68,7 @@ image = (
         f"git clone --depth 1 https://github.com/stavsap/comfyui-ollama.git {COMFY_DIR}/custom_nodes/comfyui-ollama",
         f"python -m pip install -r {COMFY_DIR}/custom_nodes/comfyui-ollama/requirements.txt",
         # Optional: pre-create ComfyUI-Manager config (you can change this later via the mounted /root/ComfyUI/user volume)
-        f"mkdir -p {COMFY_DIR}/user/__manager && printf '[default]\\nnetwork_mode = public\\nfile_logging = False\\n' > {COMFY_DIR}/user/__manager/config.ini",
+        f"mkdir -p {COMFY_DIR}/user/__manager && printf '[default]\\nnetwork_mode = offline\\nfile_logging = False\\n' > {COMFY_DIR}/user/__manager/config.ini",
     )
 )
 
@@ -201,13 +203,17 @@ def _pick_primary_video(stored_paths: list[str]) -> str | None:
 
 @app.cls(
     image=image,
-    cpu=8,
-    memory=16384,
+    cpu=4,
+    memory=8192,
     timeout=60 * 60,
-    scaledown_window=300,
-    volumes={RESULTS_MOUNT: results_vol},
+    scaledown_window=60,
+    volumes={
+        RESULTS_MOUNT: results_vol,
+        f"{COMFY_DIR}/models": models_vol,
+        f"{COMFY_DIR}/user": user_vol,
+    },
 )
-@modal.concurrent(max_inputs=8)
+@modal.concurrent(max_inputs=1)
 class ComfyHeadless:
     @modal.enter()
     def enter(self) -> None:
