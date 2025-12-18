@@ -29,6 +29,8 @@ COMFY_DIR = "/root/ComfyUI"
 COMFY_OUTPUT_DIR = f"{COMFY_DIR}/output"
 
 RESULTS_MOUNT = "/results"
+PERSIST_MODELS_MOUNT = "/persist/models"
+PERSIST_USER_MOUNT = "/persist/user"
 
 app = modal.App(name=APP_NAME)
 
@@ -207,16 +209,40 @@ def _pick_primary_video(stored_paths: list[str]) -> str | None:
     scaledown_window=60,
     volumes={
         RESULTS_MOUNT: results_vol,
-        f"{COMFY_DIR}/models": models_vol,
-        f"{COMFY_DIR}/user": user_vol,
+        # Modal Volumes must be mounted onto empty paths, so mount to /persist/*
+        # and symlink ComfyUI's directories in @modal.enter().
+        PERSIST_MODELS_MOUNT: models_vol,
+        PERSIST_USER_MOUNT: user_vol,
     },
 )
 @modal.concurrent(max_inputs=1)
 class ComfyHeadless:
     @modal.enter()
     def enter(self) -> None:
-        Path(f"{COMFY_DIR}/models").mkdir(parents=True, exist_ok=True)
-        Path(f"{COMFY_DIR}/user/__manager").mkdir(parents=True, exist_ok=True)
+        def ensure_symlink(target: Path, source: Path) -> None:
+            source.mkdir(parents=True, exist_ok=True)
+            if target.is_symlink():
+                return
+            if target.exists():
+                # Move any existing contents into the volume-backed dir on first boot.
+                try:
+                    for item in target.iterdir():
+                        dest = source / item.name
+                        if dest.exists():
+                            continue
+                        shutil.move(str(item), str(dest))
+                except NotADirectoryError:
+                    pass
+                if target.is_dir():
+                    shutil.rmtree(target)
+                else:
+                    target.unlink(missing_ok=True)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.symlink_to(source, target_is_directory=True)
+
+        ensure_symlink(Path(f"{COMFY_DIR}/models"), Path(PERSIST_MODELS_MOUNT))
+        ensure_symlink(Path(f"{COMFY_DIR}/user"), Path(PERSIST_USER_MOUNT))
+
         Path(COMFY_OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
 
         # Ensure ComfyUI-Manager doesn't do startup network fetches in production.
