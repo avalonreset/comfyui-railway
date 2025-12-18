@@ -59,9 +59,14 @@ image = (
         # CPU-only torch
         "python -m pip install --index-url https://download.pytorch.org/whl/cpu torch torchvision torchaudio",
         f"python -m pip install -r {COMFY_DIR}/requirements.txt",
+        # ComfyUI-Manager
+        f"git clone --depth 1 https://github.com/ltdrdata/ComfyUI-Manager.git {COMFY_DIR}/custom_nodes/ComfyUI-Manager",
+        f"python -m pip install -r {COMFY_DIR}/custom_nodes/ComfyUI-Manager/requirements.txt",
         # ComfyUI Ollama nodes (stavsap/comfyui-ollama)
         f"git clone --depth 1 https://github.com/stavsap/comfyui-ollama.git {COMFY_DIR}/custom_nodes/comfyui-ollama",
         f"python -m pip install -r {COMFY_DIR}/custom_nodes/comfyui-ollama/requirements.txt",
+        # Optional: pre-create ComfyUI-Manager config (you can change this later via the mounted /root/ComfyUI/user volume)
+        f"mkdir -p {COMFY_DIR}/user/__manager && printf '[default]\\nnetwork_mode = public\\nfile_logging = False\\n' > {COMFY_DIR}/user/__manager/config.ini",
     )
 )
 
